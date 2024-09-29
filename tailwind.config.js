@@ -7,6 +7,13 @@ export default {
   ],
   theme: {
   	extend: {
+		boxShadow: {
+			'inner-custom': 'inset 0px 3px 6px #0000000F',
+			'card': 'inset 0px 3px 6px #E5E5E5',
+		  },
+		  opacity: {
+			'48': '0.48',
+		  },
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
@@ -56,6 +63,7 @@ export default {
   		}
   	}
   },
+  plugins: [require('@tailwindcss/line-clamp')],
   plugins: [require("tailwindcss-animate")],
 }
 
