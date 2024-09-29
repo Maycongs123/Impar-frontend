@@ -10,6 +10,7 @@ export default {
 		boxShadow: {
 			'inner-custom': 'inset 0px 3px 6px #0000000F',
 			'card': 'inset 0px 3px 6px #E5E5E5',
+			'button': 'inset 0px 3px 6px #E763162E',
 		  },
 		  opacity: {
 			'48': '0.48',

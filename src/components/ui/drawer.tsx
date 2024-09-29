@@ -26,7 +26,7 @@ const DrawerOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DrawerPrimitive.Overlay
     ref={ref}
-    className={cn("fixed inset-0 z-50 bg-black/80", className)}
+    className={cn("fixed inset-0 z-50 bg-[#F6F4F6CC]", className)}
     {...props}
   />
 ))
@@ -41,20 +41,11 @@ const DrawerContent = React.forwardRef<
     <DrawerPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed inset-y-0 right-0 z-50 flex h-full w-full flex-col border-l bg-background transition-transform duration-300 ease-in-out data-[state=closed]:translate-x-full data-[state=open]:translate-x-0 sm:max-w-sm",
+        "fixed p-2 inset-y-0 right-0 z-50 flex h-full w-[642px] opacity-1 flex-col border-l bg-background transition-transform duration-300 ease-in-out data-[state=closed]:translate-x-full data-[state=open]:translate-x-0 ",
         className
       )}
       {...props}
     >
-      <div className="absolute left-4 top-4 flex h-6 w-6 items-center justify-center rounded-full bg-muted">
-        <DrawerPrimitive.Close className="rounded-full opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x">
-            <path d="M18 6 6 18"/>
-            <path d="m6 6 12 12"/>
-          </svg>
-          <span className="sr-only">Close</span>
-        </DrawerPrimitive.Close>
-      </div>
       {children}
     </DrawerPrimitive.Content>
   </DrawerPortal>
