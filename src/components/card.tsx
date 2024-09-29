@@ -6,9 +6,11 @@ import iconEdit from '/src/assets/icons/Icon-edit.svg';
 
 interface CardProps {
   description: string;
+  onDelete: () => void; 
+  onEdit: () => void; 
 }
 
-const Card: React.FC<CardProps> = ({ description }) => {
+const Card: React.FC<CardProps> = ({ description, onDelete, onEdit }) => {
   return (
     <div className="mt-6">
       <div className="w-[234px] h-[267px] bg-[#FFFFFF] rounded-[8px] border border-[#E4E4E4] shadow-card">
@@ -35,7 +37,10 @@ const Card: React.FC<CardProps> = ({ description }) => {
             <div className="flex w-[234px] h-[44px] bg-white rounded-b-lg shadow-inner-custom">
               <div className="ml-10 flex items-center justify-center">
                 <img className="w-[12px] h-[14px]" src={iconTrash} alt="icone excluir" />
-                <p className="ml-2 text-[15px] text-[#263238] opacity-[0.48] hover:text-[#DB2525] hover:opacity-100 cursor-pointer">
+                <p
+                  onClick={onDelete}
+                  className="ml-2 text-[15px] text-[#263238] opacity-[0.48] hover:text-[#DB2525] hover:opacity-100 cursor-pointer"
+                >
                   Excluir
                 </p>
               </div>
@@ -44,7 +49,10 @@ const Card: React.FC<CardProps> = ({ description }) => {
               </div>
               <div className="ml-5 flex items-center justify-center">
                 <img className="w-[12px] h-[14px]" src={iconEdit} alt="icone editar" />
-                <p className="ml-2 text-[15px] text-[#263238] opacity-[0.48] hover:text-[#DB2525] hover:opacity-100 cursor-pointer">
+                <p
+                  onClick={onEdit} 
+                  className="ml-2 text-[15px] text-[#263238] opacity-[0.48] hover:text-[#DB2525] hover:opacity-100 cursor-pointer"
+                >
                   Editar
                 </p>
               </div>
