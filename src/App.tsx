@@ -2,16 +2,49 @@ import './App.css'
 import { Input } from "@/components/ui/input"
 import { Button } from './components/ui/button'
 import Card from './components/card'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import DrawerRight from './components/drawer-right'
 import { DeleteModal } from './components/ui/dialog'
+import { CardService } from './services/cardService'
+import { Filter } from './models/requests/filter'
+import { CardResponse } from './models/responses/cardResponse'
 
 function App() {
   const [openDrawer, setOpenDrawer] = useState(false)
   const [openModal, setOpenModal] = useState(false)
+  const [selectedCardId, setSelectedCardId] = useState(0)
+  const [cards, setCards] = useState<CardResponse[]>([]);
 
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  useEffect(() => {
+    getAllCards()
+  }, [])
+
+  const getAllCards = async () => {
+    const filterRequest: Filter = {
+      CurrentPage: 1,
+      "OrderBy.Ascendent": true,
+      "OrderBy.Column": 'name',
+      PageSize: 10,
+    }
+
+    const result = await CardService.GetAll(filterRequest);
+
+    setCards(result?.items!)
+  }
+
+  const handleCardCreated = (newCard: CardResponse) => {
+    setCards((prevCards) => [...prevCards, newCard]);
+  };
+
+  const handleDelete = (id: number) => {
+    setSelectedCardId(id);
+    setOpenModal(true)
+  }
+
+  const handleCardDeleted = (id: number) => {
+    setCards((prevCards) => prevCards.filter(card => card.id !== id));
+  };
 
   return (
     <div className="min-h-screen w-full bg-[#F6F4F6]">
@@ -51,11 +84,22 @@ function App() {
             </Button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            <Card onDelete={() => setOpenModal(true)} onEdit={() => setOpenDrawer(true)} description="Lorem Ipsu amet dolor" />
-            <Card onDelete={() => setOpenModal(true)} onEdit={() => setOpenDrawer(true)} description="Lorem Ipsu amet dolor" />
+            {cards.map((card) => (
+              <Card key={card.id}
+                onDelete={() => handleDelete(card.id)}
+                onEdit={() => setOpenDrawer(true)}
+                card={card}
+                />
+            ))}
           </div>
-          <DrawerRight openDrawer={openDrawer} setOpenDrawer={setOpenDrawer} />
-          <DeleteModal openModal={openModal} setOpenModal={setOpenModal} />
+          <DrawerRight openDrawer={openDrawer}
+            setOpenDrawer={setOpenDrawer}
+            onCardCreated={handleCardCreated} />
+          <DeleteModal
+           onDeleteConfirmed={handleCardDeleted} 
+            openModal={openModal}
+            id={selectedCardId}
+            setOpenModal={setOpenModal} />
         </div>
       </div>
     </div>

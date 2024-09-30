@@ -4,6 +4,9 @@ import { Cross2Icon } from "@radix-ui/react-icons"
 import { Button } from "@/components/ui/button" 
 
 import { cn } from "@/lib/utils"
+import { CardService } from "@/services/cardService"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Dialog = DialogPrimitive.Root
 const DialogTrigger = DialogPrimitive.Trigger
@@ -89,9 +92,19 @@ const DialogDescription = React.forwardRef<
 ))
 DialogDescription.displayName = DialogPrimitive.Description.displayName
 
-export function DeleteModal({ openModal, setOpenModal }: { openModal: boolean, setOpenModal: (open: boolean) => void }) {
+export function DeleteModal({ openModal, setOpenModal, id, onDeleteConfirmed }: 
+   { openModal: boolean, setOpenModal: (open: boolean) => void, id: number, onDeleteConfirmed: (id: number) => void }) {
+
+  const handleDelete = async () => {
+    await CardService.Delete(id);  
+    onDeleteConfirmed(id);
+    toast.success('Card excluido com sucesso!')
+    setOpenModal(false); 
+  };
+
   return (
     <Dialog open={openModal} onOpenChange={setOpenModal}>
+      <ToastContainer/>
       <DialogContent>
         <DialogHeader className="mt-3">
           <div className="flex justify-center mb-4 border-[6px] border-[#E4E4E4] rounded-[100px] w-[9.9rem] h-[9.9rem] items-center bg-[#DB25250F]">
@@ -103,13 +116,15 @@ export function DeleteModal({ openModal, setOpenModal }: { openModal: boolean, s
           </div>
 
           <DialogTitle className="text-[2rem]">Excluir</DialogTitle>
-          <DialogDescription className="opacity-1 uppercase text-[#454545] text-[0.7rem] leading-[0.9rem] font-bold tracking-normal font-muli" >Certeza que deseja excluir?</DialogDescription>
+          <DialogDescription className="opacity-1 uppercase text-[#454545] text-[0.7rem] leading-[0.9rem] font-bold tracking-normal font-muli">
+            Certeza que deseja excluir?
+          </DialogDescription>
         </DialogHeader>
-        <div className='mt-6'>
-          <div className='w-[24rem] border border-[#D4D4D4]'></div>
+        <div className="mt-6">
+          <div className="w-[24rem] border border-[#D4D4D4]"></div>
         </div>
         <DialogFooter>
-          <Button className="text-[#FFFFFF] text-[1.1rem] leading-[1.4rem] tracking-normal font-muli bg-red-500 px-4 py-2 rounded-lg w-[10rem] h-[3rem] rounded-[0.5rem] hover:bg-red-500">
+          <Button onClick={handleDelete} className="text-[#FFFFFF] text-[1.1rem] border-[#DB2525]  leading-[1.4rem] tracking-normal font-muli bg-red-500 px-4 py-2 rounded-lg w-[10rem] h-[3rem] rounded-[0.5rem] hover:bg-red-500">
             Excluir
           </Button>
           <DialogClose asChild>
@@ -118,8 +133,7 @@ export function DeleteModal({ openModal, setOpenModal }: { openModal: boolean, s
             </Button>
           </DialogClose>
         </DialogFooter>
-
       </DialogContent>
     </Dialog>
-  )
+  );
 }
