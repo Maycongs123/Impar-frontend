@@ -18,7 +18,7 @@ const Card: React.FC<CardProps> = ({ card, onDelete, onEdit }) => {
             <div className="w-[95px] h-[95px] bg-[#F6F4F6] border border-[#E4E4E4] rounded-full flex justify-center items-center overflow-hidden">
               <img
                 className="w-full h-full object-cover"
-                src={`data:image/jpeg;base64,${card.photoBase64}`}
+                src={`${card.photoBase64}`}
                 alt="Imagem Card"
               />
             </div>

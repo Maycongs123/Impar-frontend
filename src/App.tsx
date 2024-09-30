@@ -9,6 +9,7 @@ import { DeleteModal } from './components/ui/dialog'
 import { CardService } from './services/cardService'
 import { Filter } from './models/requests/filter'
 import { CardResponse } from './models/responses/cardResponse'
+import { ToastContainer } from 'react-toastify'
 
 function App() {
   const [openDrawer, setOpenDrawer] = useState(false)
@@ -16,13 +17,15 @@ function App() {
   const [selectedCardId, setSelectedCardId] = useState(0)
   const [cards, setCards] = useState<CardResponse[]>([]);
   const [selectedCard, setSelectedCard] = useState<CardResponse>();
-
+  const [searchTerm, setSearchTerm] = useState('');
+  
   useEffect(() => {
     getAllCards()
   }, [])
 
-  const getAllCards = async () => {
+  const getAllCards = async (name?: string) => {
     const filterRequest: Filter = {
+      Name: name,
       CurrentPage: 1,
       "OrderBy.Ascendent": true,
       "OrderBy.Column": 'name',
@@ -53,6 +56,7 @@ function App() {
   }
 
   const handleCardUpdated = (updatedCard: CardResponse) => {
+
     setCards((prevCards) =>
       prevCards.map((card) =>
         card.id === updatedCard.id ? { ...card, photoBase64: updatedCard.photoBase64, name: updatedCard.name } : card
@@ -60,8 +64,16 @@ function App() {
     );
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);  
+    getAllCards(value); 
+  };
+
+
   return (
     <div className="min-h-screen w-full bg-[#F6F4F6]">
+       <ToastContainer />
       <div>
         <div className="bg-gradient-custom shadow-md opacity-100 h-16 w-full p-4 fixed top-0 left-0 z-50">
           <img src="src/assets/logo-teste.png" alt="logo teste" />
@@ -76,6 +88,8 @@ function App() {
             <div className="w-[1046px] absolute top-[170px] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1/2">
               <Input
                 type="text"
+                value={searchTerm}
+                onChange={handleInputChange} 
                 placeholder="Digite aqui sua busca"
                 className="w-full p-4 pr-12 bg-white border rounded-[8px] h-20"
               />

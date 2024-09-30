@@ -1,24 +1,32 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 
 interface CustomFileInputProps {
   onFileSelect: (file: File | null) => void;
+  selectedFile?: File | null; 
 }
 
-export function InputFile({ onFileSelect }: CustomFileInputProps) {
-  const [fileName, setFileName] = useState("Nenhum arquivo selecionado")
-  const fileInputRef = useRef<HTMLInputElement>(null)
+export function InputFile({ onFileSelect, selectedFile }: CustomFileInputProps) {
+  const [fileName, setFileName] = useState("Nenhum arquivo selecionado");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  
+  useEffect(() => {
+    if (selectedFile) {
+      setFileName(selectedFile.name); 
+    }
+  }, [selectedFile]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] || null
-    setFileName(file ? file.name : "Nenhum arquivo selecionado")
-    onFileSelect(file)
-  }
+    const file = event.target.files?.[0] || null;
+    setFileName(file ? file.name : "Nenhum arquivo selecionado");
+    onFileSelect(file);
+  };
 
   const handleButtonClick = () => {
-    fileInputRef.current?.click()
-  }
+    fileInputRef.current?.click();
+  };
 
   return (
     <div className="flex items-center w-[35.8rem] h-[3.75rem] bg-white border border-[#B9B9B9] rounded-[8px] overflow-hidden">
@@ -39,5 +47,5 @@ export function InputFile({ onFileSelect }: CustomFileInputProps) {
         onChange={handleFileChange}
       />
     </div>
-  )
+  );
 }

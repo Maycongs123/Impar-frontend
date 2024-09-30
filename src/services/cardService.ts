@@ -5,13 +5,14 @@ import { Filter } from "@/models/requests/filter";
 import axios from "axios";
 import { GetAllCardsResponse } from "@/models/responses/getAllCardsResponse";
 import { PatchRequest } from "@/models/requests/patchRequest";
+import { CreateRequest } from "@/models/requests/createRequest";
 
 export const CardService = {
-  Post: async (card: FormData): Promise<CardResponse | null> => {
+  Post: async (card: CreateRequest): Promise<CardResponse | null> => {
     try {
       const API_URL = `${api.baseUrlApi}/Card`;
       const httpHeaders = {
-        "Content-Type": "multipart/form-data",
+     "Content-Type": "application/json",
       };
 
       const response = await axios.post<CardResponse>(API_URL, card, {

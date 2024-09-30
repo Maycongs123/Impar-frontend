@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 
 import { cn } from "@/lib/utils"
 import { CardService } from "@/services/cardService"
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Dialog = DialogPrimitive.Root
@@ -104,7 +104,6 @@ export function DeleteModal({ openModal, setOpenModal, id, onDeleteConfirmed }:
 
   return (
     <Dialog open={openModal} onOpenChange={setOpenModal}>
-      <ToastContainer/>
       <DialogContent>
         <DialogHeader className="mt-3">
           <div className="flex justify-center mb-4 border-[6px] border-[#E4E4E4] rounded-[100px] w-[9.9rem] h-[9.9rem] items-center bg-[#DB25250F]">
