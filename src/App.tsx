@@ -10,6 +10,7 @@ import { CardService } from './services/cardService'
 import { Filter } from './models/requests/filter'
 import { CardResponse } from './models/responses/cardResponse'
 import { ToastContainer } from 'react-toastify'
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from './components/ui/pagination'
 
 function App() {
   const [openDrawer, setOpenDrawer] = useState(false)
@@ -18,24 +19,43 @@ function App() {
   const [cards, setCards] = useState<CardResponse[]>([]);
   const [selectedCard, setSelectedCard] = useState<CardResponse>();
   const [searchTerm, setSearchTerm] = useState('');
-  
-  useEffect(() => {
-    getAllCards()
-  }, [])
+  const [currentPage, setCurrentPage] = useState(1); 
+  const [totalPages, setTotalPages] = useState(1); 
+  const [pageSize, setPageSize] = useState(8); 
 
-  const getAllCards = async (name?: string) => {
+  const getAllCards = async (page: number = 1, name?: string ) => {
+    debugger
     const filterRequest: Filter = {
-      Name: name,
-      CurrentPage: 1,
+      Name: name, 
+      CurrentPage: page, 
       "OrderBy.Ascendent": true,
       "OrderBy.Column": 'name',
-      PageSize: 10,
-    }
+      PageSize: pageSize, 
+    };
 
     const result = await CardService.GetAll(filterRequest);
 
-    setCards(result?.items!)
-  }
+    setCards(result!.items); 
+    setCurrentPage(result!.currentPage); 
+    setTotalPages(result!.totalPages); 
+    setPageSize(result!.pageSize); 
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      getAllCards(currentPage - 1);
+    }
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      getAllCards(currentPage + 1);
+    }
+  };
+
+  const goToPage = (page: number) => {
+    getAllCards(page); 
+  };
 
   const handleCardCreated = (newCard: CardResponse) => {
     setCards((prevCards) => [...prevCards, newCard]);
@@ -66,14 +86,17 @@ function App() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setSearchTerm(value);  
-    getAllCards(value); 
+    setSearchTerm(value);
+    getAllCards(1, value);
   };
 
+  useEffect(() => {
+    getAllCards(); 
+  }, []);
 
   return (
     <div className="min-h-screen w-full bg-[#F6F4F6]">
-       <ToastContainer />
+      <ToastContainer />
       <div>
         <div className="bg-gradient-custom shadow-md opacity-100 h-16 w-full p-4 fixed top-0 left-0 z-50">
           <img src="src/assets/logo-teste.png" alt="logo teste" />
@@ -89,7 +112,7 @@ function App() {
               <Input
                 type="text"
                 value={searchTerm}
-                onChange={handleInputChange} 
+                onChange={handleInputChange}
                 placeholder="Digite aqui sua busca"
                 className="w-full p-4 pr-12 bg-white border rounded-[8px] h-20"
               />
@@ -133,6 +156,29 @@ function App() {
             setOpenModal={setOpenModal} />
         </div>
       </div>
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious className="cursor-pointer" onClick={goToPreviousPage} />
+          </PaginationItem>
+
+          {Array.from({ length: totalPages }, (_, index) => (
+            <PaginationItem key={index}>
+              <PaginationLink
+                isActive={currentPage === index + 1}
+                onClick={() => goToPage(index + 1)}
+              >
+                {index + 1}
+              </PaginationLink>
+            </PaginationItem>
+          ))}
+
+          <PaginationItem>
+            <PaginationNext className="cursor-pointer" onClick={goToNextPage} />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+
     </div>
 
   )
