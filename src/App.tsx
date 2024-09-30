@@ -24,7 +24,6 @@ function App() {
   const [pageSize, setPageSize] = useState(8); 
 
   const getAllCards = async (page: number = 1, name?: string ) => {
-    debugger
     const filterRequest: Filter = {
       Name: name, 
       CurrentPage: page, 
@@ -75,8 +74,7 @@ function App() {
     setSelectedCard(card);
   }
 
-  const handleCardUpdated = (updatedCard: CardResponse) => {
-
+  const handleCardUpdated = (updatedCard: CardResponse) => { 
     setCards((prevCards) =>
       prevCards.map((card) =>
         card.id === updatedCard.id ? { ...card, photoBase64: updatedCard.photoBase64, name: updatedCard.name } : card
@@ -136,7 +134,7 @@ function App() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {cards.map((card) => (
-              <Card key={card.id}
+              <Card key={`${card.id}-${card.photoBase64}`}
                 onDelete={() => handleDelete(card.id)}
                 onEdit={() => handleOpenDrawer(card)}
                 card={card}

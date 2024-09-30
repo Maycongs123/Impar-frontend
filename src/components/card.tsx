@@ -10,6 +10,7 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ card, onDelete, onEdit }) => {
+
   return (
     <div className="mt-6">
       <div className="w-[234px] h-[267px] bg-[#FFFFFF] rounded-[8px] border border-[#E4E4E4] shadow-card">
@@ -18,14 +19,14 @@ const Card: React.FC<CardProps> = ({ card, onDelete, onEdit }) => {
             <div className="w-[95px] h-[95px] bg-[#F6F4F6] border border-[#E4E4E4] rounded-full flex justify-center items-center overflow-hidden">
               <img
                 className="w-full h-full object-cover"
-                src={`${card.photoBase64}`}
+                src={card.photoBase64}
                 alt="Imagem Card"
               />
             </div>
           </div>
 
           <div className="flex justify-center mt-4">
-            <div className="w-[169px] h-[2px] bg-[red]"></div>
+            <div className="w-[169px] h-[2px] bg-[#F0EFF0]"></div>
           </div>
 
           <div className="flex justify-center mt-1">
