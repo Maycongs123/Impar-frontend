@@ -15,6 +15,7 @@ function App() {
   const [openModal, setOpenModal] = useState(false)
   const [selectedCardId, setSelectedCardId] = useState(0)
   const [cards, setCards] = useState<CardResponse[]>([]);
+  const [selectedCard, setSelectedCard] = useState<CardResponse>();
 
   useEffect(() => {
     getAllCards()
@@ -44,6 +45,19 @@ function App() {
 
   const handleCardDeleted = (id: number) => {
     setCards((prevCards) => prevCards.filter(card => card.id !== id));
+  };
+
+  const handleOpenDrawer = (card: CardResponse) => {
+    setOpenDrawer(true)
+    setSelectedCard(card);
+  }
+
+  const handleCardUpdated = (updatedCard: CardResponse) => {
+    setCards((prevCards) =>
+      prevCards.map((card) =>
+        card.id === updatedCard.id ? { ...card, photoBase64: updatedCard.photoBase64, name: updatedCard.name } : card
+      )
+    );
   };
 
   return (
@@ -87,16 +101,19 @@ function App() {
             {cards.map((card) => (
               <Card key={card.id}
                 onDelete={() => handleDelete(card.id)}
-                onEdit={() => setOpenDrawer(true)}
+                onEdit={() => handleOpenDrawer(card)}
                 card={card}
-                />
+              />
             ))}
           </div>
-          <DrawerRight openDrawer={openDrawer}
+          <DrawerRight
+            selectedCard={selectedCard}
+            openDrawer={openDrawer}
+            onCardUpdated={handleCardUpdated}
             setOpenDrawer={setOpenDrawer}
             onCardCreated={handleCardCreated} />
           <DeleteModal
-           onDeleteConfirmed={handleCardDeleted} 
+            onDeleteConfirmed={handleCardDeleted}
             openModal={openModal}
             id={selectedCardId}
             setOpenModal={setOpenModal} />

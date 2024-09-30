@@ -6,7 +6,7 @@ import { CardResponse } from "@/models/responses/cardResponse";
 interface CardProps {
   card: CardResponse;
   onDelete: (id: number) => void;
-  onEdit: () => void;
+  onEdit: (card: CardResponse) => void;
 }
 
 const Card: React.FC<CardProps> = ({ card, onDelete, onEdit }) => {
@@ -53,7 +53,7 @@ const Card: React.FC<CardProps> = ({ card, onDelete, onEdit }) => {
               <div className="ml-5 flex items-center justify-center">
                 <img className="w-[12px] h-[14px]" src={iconEdit} alt="icone editar" />
                 <p
-                  onClick={onEdit}
+                  onClick={() => onEdit(card)}
                   className="ml-2 text-[15px] text-[#263238] opacity-[0.48] hover:text-[#DB2525] hover:opacity-100 cursor-pointer"
                 >
                   Editar

@@ -4,19 +4,22 @@ import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from './ui/drawer'
 import { Input } from "./ui/input";
 import { InputFile } from "./ui/input-file";
 import { Button } from "./ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CardService } from "@/services/cardService";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { CardResponse } from "@/models/responses/cardResponse";
+import { PatchRequest } from "@/models/requests/patchRequest";
 
 interface DrawerProps {
   openDrawer: boolean;
   setOpenDrawer: (open: boolean) => void;
   onCardCreated: (newCard: CardResponse) => void;
+  selectedCard?: CardResponse | null;
+  onCardUpdated: (updatedCard: CardResponse) => void; 
 }
 
-const DrawerRight: React.FC<DrawerProps> = ({ openDrawer, setOpenDrawer, onCardCreated }) => {
+const DrawerRight: React.FC<DrawerProps> = ({ openDrawer, setOpenDrawer, onCardCreated, selectedCard, onCardUpdated}) => {
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [inputValue, setInputValue] = useState('');
@@ -25,13 +28,18 @@ const DrawerRight: React.FC<DrawerProps> = ({ openDrawer, setOpenDrawer, onCardC
     setInputValue(e.target.value);
   };
 
-  const createCard = async () => {
+  const createOrEditCard = async () => {
     if(inputValue === ""){
       toast.warn('Você precisa digitar um nome para o card')
       return;
     }else if(selectedFile === null){
       toast.warn('Você precisa escolher uma imagem para o card')
       return;
+    }
+debugger
+    if(selectedCard !== null){
+       editCard()
+       return;
     }
 
     const formData = new FormData()
@@ -52,13 +60,53 @@ const DrawerRight: React.FC<DrawerProps> = ({ openDrawer, setOpenDrawer, onCardC
     }
   }
 
+  const editCard = async () => {
+    debugger
+      const base64File = await convertFileToBase64(selectedFile!);
+      const cleanBase64File = base64File.split(',')[1];
+      const patchRequest: PatchRequest = {
+        name: inputValue,
+        photoBase64: cleanBase64File, 
+        photoId: selectedCard?.photoId!,
+        status: selectedCard?.status!,
+      };
+  
+      try {
+        const result = await CardService.Patch(selectedCard?.id!, patchRequest);
+
+        if (result) {
+          toast.success('Card atualizado com sucesso!');
+          onCardUpdated(result); 
+          setInputValue('');
+          setOpenDrawer(false);  
+        }
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : 'Erro ao atualizar o card');
+      }
+  };
+
+  const convertFileToBase64 = (file: File): Promise<string> => {
+    return new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
+  };
+  
+  useEffect(() => {
+    if (selectedCard) {
+      setInputValue(selectedCard.name); 
+    }
+  }, [selectedCard]);
+
   return (
     <Drawer direction='right' open={openDrawer} onOpenChange={setOpenDrawer}>
       <ToastContainer />
       <DrawerContent>
         <DrawerHeader className='flex items-center'>
           <img src="src\assets\icons\icone_criar.svg" alt="icone criar card" />
-          <DrawerTitle className='text-[#5F1478] font-bold text-[32px] leading-[40px] tracking-normal font-muli'>Criar card</DrawerTitle>
+          <DrawerTitle className='text-[#5F1478] font-bold text-[32px] leading-[40px] tracking-normal font-muli'>{selectedCard ? "Editar Card" : "Criar Card"}</DrawerTitle>
         </DrawerHeader>
         <div className='ml-4 mt-[1.1rem] '>
           <div className='w-[35.8rem] border border-[#D4D4D4]'></div>
@@ -82,8 +130,8 @@ const DrawerRight: React.FC<DrawerProps> = ({ openDrawer, setOpenDrawer, onCardC
           <div className='w-[35.8rem] border border-[#D4D4D4]'></div>
         </div>
         <div className='flex justify-end mr-[2rem] mt-[1.6rem]'>
-          <Button onClick={createCard} className="w-[11.125rem] h-[3rem] text-lg leading-[1.4375rem] rounded-[0.5rem] mr-[0.3125rem] font-muli" variant="custom">
-            Criar card
+          <Button onClick={createOrEditCard} className="w-[11.125rem] h-[3rem] text-lg leading-[1.4375rem] rounded-[0.5rem] mr-[0.3125rem] font-muli" variant="custom">
+          {selectedCard ? "Editar Card" : "Criar Card"}
           </Button>
         </div>
       </DrawerContent>

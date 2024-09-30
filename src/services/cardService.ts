@@ -4,6 +4,7 @@ import { CardResponse } from "@/models/responses/cardResponse";
 import { Filter } from "@/models/requests/filter";
 import axios from "axios";
 import { GetAllCardsResponse } from "@/models/responses/getAllCardsResponse";
+import { PatchRequest } from "@/models/requests/patchRequest";
 
 export const CardService = {
   Post: async (card: FormData): Promise<CardResponse | null> => {
@@ -78,6 +79,29 @@ export const CardService = {
         throw new Error(result?.message || "Erro interno servidor tente novamente mais tarde!");
       }
       throw new Error("Não foi possível concluir a exclusão do card.");
+    }
+  },
+  Patch: async (id: number, patchRequest: PatchRequest) => {
+    try {
+      const API_URL = `${api.baseUrlApi}/Card/${id}`;
+
+      const httpHeaders = {
+        "Content-Type": "application/json",
+      };
+
+      const response = await axios.patch<CardResponse>(API_URL, patchRequest, {
+        headers: httpHeaders,
+      });
+
+      if (response) {
+        return response.data;
+      }
+    } catch (error: any) {
+      if (error) {
+        const result: Result<CardResponse> = error.response?.data;
+        throw new Error(result?.message || "Erro interno servidor tente novamente mais tarde!");
+      }
+      throw new Error("Não foi possível concluir a edição do card.");
     }
   },
 };
